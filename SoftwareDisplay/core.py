@@ -1,37 +1,13 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+class TomlError(RuntimeError):
+    def __init__(self, message, line, col, filename):
+        RuntimeError.__init__(self, message, line, col, filename)
+        self.message = message
+        self.line = line
+        self.col = col
+        self.filename = filename
 
-"""
-certifi.py
-~~~~~~~~~~
+    def __str__(self):
+        return '{}({}, {}): {}'.format(self.filename, self.line, self.col, self.message)
 
-This module returns the installation location of cacert.pem.
-"""
-import os
-import warnings
-
-
-class DeprecatedBundleWarning(DeprecationWarning):
-    """
-    The weak security bundle is being deprecated. Please bother your service
-    provider to get them to stop using cross-signed roots.
-    """
-
-
-def where():
-    f = os.path.dirname(__file__)
-
-    return os.path.join(f, 'cacert.pem')
-
-
-def old_where():
-    warnings.warn(
-        "The weak security bundle has been removed. certifi.old_where() is now an alias "
-        "of certifi.where(). Please update your code to use certifi.where() instead. "
-        "certifi.old_where() will be removed in 2018.",
-        DeprecatedBundleWarning
-    )
-    return where()
-
-if __name__ == '__main__':
-    print(where())
+    def __repr__(self):
+        return 'TomlError({!r}, {!r}, {!r}, {!r})'.format(self.message, self.line, self.col, self.filename)
