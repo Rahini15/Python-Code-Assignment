@@ -1,0 +1,37 @@
+{% include 'header.html' %}
+
+<br>
+<br><br><br>
+
+<div align="center">
+
+       <img src="static/admin.png" align="center" >
+
+      <tr class="mainbar">
+      {% if error %}
+         <p><strong>Error:</strong> {{ error }}
+      {% endif %}
+
+      <form action = "/asigninclick" method = "POST">
+        <div align="center">
+        <table>
+          <th> Admin Login </th>
+        <tr>
+          <td> User id </td>
+          <td> <input type = "text" name = "email" /> </td>
+        </tr>
+        <tr>
+          <td> password </td>
+          <td><input type = "password" name = "pwd" /> </td>
+        </tr>
+        <tr>
+          <td></td>
+         <td><input type = "submit" value = "Sign in" /></td>
+        </tr>
+       </table></div>
+      </form>
+      <div class="clr"></div>
+    </div>
+
+</body>
+</html>

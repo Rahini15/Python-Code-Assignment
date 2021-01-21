@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Redirect to a Webpage</h2>
+<p>The replace() method replaces the current document with a new one:</p>
+
+<select id="mySelect" name = "cars" onchange="myFunction()">
+      <option value="BALAGURUSAMY">BALAGURUSAMY</option>
+      <option value="RAJA">RAJA</option>
+      <option value="UST">UST</option>
+
+    </select>
+
+<button onclick="myFunction()">Replace document</button>
+
+<script>
+function myFunction() {
+var mySelect = document.getElementById('mySelect');
+
+  //location.replace("https://www.w3schools.com?id="+mySelect)
+  window.location.href='/searchAuthor?author='+mySelect.value;
+}
+</script>
+
+</body>
+</html>

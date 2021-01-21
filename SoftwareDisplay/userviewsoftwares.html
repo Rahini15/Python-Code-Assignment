@@ -1,0 +1,133 @@
+{% include 'userhead.html' %}
+
+
+<br>
+<br><br><br>
+<div align="center">
+
+    Welcome  {{session['username']}}
+
+
+</div>
+<div>
+
+
+
+</div>
+
+<div class="content">
+
+      <form method="POST" action="/search1">
+          <br>
+<div align="center">
+          Enter Application Name <input type = "text" name = "name"   /> <input type = "submit" value = "Search" /></div>
+
+          <br>
+          <div align="center">
+
+<div>
+    Select Author <select name="author" id="author" onchange="myFunctionAuthor()">
+    <option value="Select"> Select</option>
+    {% for row in authors %}
+    <option value= {{row['author']}} > {{row['author']}}</option>
+    {% endfor %}
+</select>
+</div>
+
+<div>
+    Select Price <select name="price" id="price"  onchange="myFunctionPrice()">
+               <option value="Select"> Select</option>
+    <option value="Low to High" >Low to High</option>
+    <option value="High to Low" >High to Low</option>
+</select>
+</div>
+<div>
+               Select Publisher <select name="publisher3" id="publisher3" >
+                <option value="Select"> Select</option>
+    {% for row in publishers %}
+    <option value= {{row['author']}} > {{row['author']}}</option>
+    {% endfor %}
+</select>
+
+               Select Year <select name="year" id="year"  onchange="myFunction3()">
+                <option value="Select"> Select</option>
+    {% for row in years %}
+    <option value= {{row['pub_year']}} > {{row['pub_year']}}</option>
+    {% endfor %}
+</select>
+</div>
+
+
+
+d) Sort the list of applications in the increasing order of two fields , author and publishing year of the books.
+<a href="/search4" >Sort Applications</a>
+
+<table border = 1>
+         <tr>
+         <th>Application ID</th>
+         <th>Application Name</th>
+         <th>Author</th>
+         <th>Version</th>
+             <th>Publication Year</th>
+
+<th>Price</th>
+
+            </tr>
+          {% for row in data %}
+        <tr>
+
+
+                 <td>{{row['sid']}}</td>
+                 <td>{{row['sname']}}</td>
+                 <td>{{row['author']}}</td>
+                 <td>{{row['version']}}</td>
+    <td>{{row['pub_year']}}</td>
+
+ <td>{{row['price']}}</td>
+
+
+
+        </tr>
+    {% endfor %}
+    </table>
+                </div>
+
+         </form>
+
+
+<script>
+function myFunctionAuthor() {
+var mySelect = document.getElementById('author');
+if (mySelect.value!="Select")
+{
+  //location.replace("https://www.w3schools.com?id="+mySelect)
+  window.location.href='/searchAuthor?author='+mySelect.value;
+}
+}
+
+
+function myFunctionPrice() {
+var mySelect = document.getElementById('price');
+if (mySelect.value!="Select")
+{
+  //location.replace("https://www.w3schools.com?id="+mySelect)
+  window.location.href='/searchPrice?pricetype='+mySelect.value;
+}
+}
+
+
+
+function myFunction3() {
+var mySelect = document.getElementById('publisher3');
+var mySelect1 = document.getElementById('year');
+if (mySelect.value!="Select" && mySelect1.value!="Select")
+{
+  //location.replace("https://www.w3schools.com?id="+mySelect)
+  window.location.href='/search3?publisher3='+mySelect.value+'&year='+mySelect1.value;
+}
+}
+
+</script>
+
+</div>
+{% include 'footer.html' %}

@@ -1,0 +1,123 @@
+<head>
+    <style type="text/css">
+        #Select1 {
+            height: 25px;
+            width: 142px;
+        }
+    </style>
+</head>
+{% include 'adminheader.html' %}
+
+
+<div>
+
+<br>
+    <br><br><br><br>
+    Welcome admin
+</div>
+
+<div align="center">
+ <form action = "/bookclick" method = "POST">
+<br>
+     <br>
+     <br>
+     <br><br><br>
+<table class="style1">
+     <tr>
+                <td colspan="2">
+
+              Entry Details
+                    &nbsp;</td>
+            </tr>
+
+     <tr>
+                <td> <p>Application id</p>
+                   &nbsp;</td>
+                <td><input type = "text" name = "sid" />
+                    &nbsp;</td>
+            </tr>
+            <tr>
+                <td><p>Application Name</p>
+                    &nbsp;</td>
+                <td><input type = "text" name = "sname"   />
+                    &nbsp;</td>
+            </tr>
+
+      <tr>
+                <td><p>Author</p>
+                    &nbsp;</td>
+                <td><input type = "text" name = "author" />
+                    &nbsp;</td>
+            </tr>
+    <tr>
+                <td><p>Version</p>
+                    &nbsp;</td>
+                <td><input type = "text" name = "version" />
+                    &nbsp;</td>
+            </tr>
+    <tr>
+                <td><p>Publishing Year</p>
+                    &nbsp;</td>
+                <td><input type = "text" name = "pub_year" />
+                    &nbsp;</td>
+            </tr>
+      <tr>
+                <td><p>Price</p>
+                    &nbsp;</td>
+                <td><input type = "text" name = "price" />
+                    &nbsp;</td>
+            </tr>
+
+     <tr>
+                <td> <p></p>
+                    &nbsp;</td>
+                <td><input type = "submit" value = "Register" />
+                    &nbsp;</td>
+            </tr>
+        </table>
+    
+
+<table border = 1>
+         <tr>
+             <th>ID</th>
+         <th>App ID</th>
+         <th>App Name</th>
+         <th>Author</th>
+         <th>Version</th>
+             <th>Publishing Year</th>
+              <th>Price</th>
+             <th>Delete</th>
+
+
+            </tr>
+          {% for row in data1 %}
+        <tr>
+
+<td>{{row['id']}}</td>
+                 <td>{{row['sid']}}</td>
+                 <td>{{row['sname']}}</td>
+                 <td>{{row['author']}}</td>
+                 <td>{{row['version']}}</td>
+                <td>{{row['pub_year']}}</td>
+              <td>{{row['price']}}</td>
+             <td><a href="/adeletefees/{{row['id']}}" > Delete</a></td>
+
+
+
+
+        </tr>
+    {% endfor %}
+    </table>
+
+
+
+
+
+
+      </form>
+
+</div>
+
+
+
+{% include 'footer.html' %}
