@@ -1,36 +1,120 @@
-from __future__ import absolute_import
+"""Module containing bug report helper(s)."""
+from __future__ import print_function
 
-from pip._internal.basecommand import SUCCESS, Command
-from pip._internal.exceptions import CommandError
+import json
+import platform
+import sys
+import ssl
+
+from pip._vendor import idna
+from pip._vendor import urllib3
+from pip._vendor import chardet
+
+from . import __version__ as requests_version
+
+try:
+    from .packages.urllib3.contrib import pyopenssl
+except ImportError:
+    pyopenssl = None
+    OpenSSL = None
+    cryptography = None
+else:
+    import OpenSSL
+    import cryptography
 
 
-class HelpCommand(Command):
-    """Show help for commands"""
-    name = 'help'
-    usage = """
-      %prog <command>"""
-    summary = 'Show help for commands.'
-    ignore_require_venv = True
+def _implementation():
+    """Return a dict with the Python implementation and version.
 
-    def run(self, options, args):
-        from pip._internal.commands import commands_dict, get_similar_commands
+    Provide both the name and the version of the Python implementation
+    currently running. For example, on CPython 2.7.5 it will return
+    {'name': 'CPython', 'version': '2.7.5'}.
 
-        try:
-            # 'pip help' with no args is handled by pip.__init__.parseopt()
-            cmd_name = args[0]  # the command we need help for
-        except IndexError:
-            return SUCCESS
+    This function works best on CPython and PyPy: in particular, it probably
+    doesn't work for Jython or IronPython. Future investigation should be done
+    to work out the correct shape of the code for those platforms.
+    """
+    implementation = platform.python_implementation()
 
-        if cmd_name not in commands_dict:
-            guess = get_similar_commands(cmd_name)
+    if implementation == 'CPython':
+        implementation_version = platform.python_version()
+    elif implementation == 'PyPy':
+        implementation_version = '%s.%s.%s' % (sys.pypy_version_info.major,
+                                               sys.pypy_version_info.minor,
+                                               sys.pypy_version_info.micro)
+        if sys.pypy_version_info.releaselevel != 'final':
+            implementation_version = ''.join([
+                implementation_version, sys.pypy_version_info.releaselevel
+            ])
+    elif implementation == 'Jython':
+        implementation_version = platform.python_version()  # Complete Guess
+    elif implementation == 'IronPython':
+        implementation_version = platform.python_version()  # Complete Guess
+    else:
+        implementation_version = 'Unknown'
 
-            msg = ['unknown command "%s"' % cmd_name]
-            if guess:
-                msg.append('maybe you meant "%s"' % guess)
+    return {'name': implementation, 'version': implementation_version}
 
-            raise CommandError(' - '.join(msg))
 
-        command = commands_dict[cmd_name]()
-        command.parser.print_help()
+def info():
+    """Generate information for a bug report."""
+    try:
+        platform_info = {
+            'system': platform.system(),
+            'release': platform.release(),
+        }
+    except IOError:
+        platform_info = {
+            'system': 'Unknown',
+            'release': 'Unknown',
+        }
 
-        return SUCCESS
+    implementation_info = _implementation()
+    urllib3_info = {'version': urllib3.__version__}
+    chardet_info = {'version': chardet.__version__}
+
+    pyopenssl_info = {
+        'version': None,
+        'openssl_version': '',
+    }
+    if OpenSSL:
+        pyopenssl_info = {
+            'version': OpenSSL.__version__,
+            'openssl_version': '%x' % OpenSSL.SSL.OPENSSL_VERSION_NUMBER,
+        }
+    cryptography_info = {
+        'version': getattr(cryptography, '__version__', ''),
+    }
+    idna_info = {
+        'version': getattr(idna, '__version__', ''),
+    }
+
+    # OPENSSL_VERSION_NUMBER doesn't exist in the Python 2.6 ssl module.
+    system_ssl = getattr(ssl, 'OPENSSL_VERSION_NUMBER', None)
+    system_ssl_info = {
+        'version': '%x' % system_ssl if system_ssl is not None else ''
+    }
+
+    return {
+        'platform': platform_info,
+        'implementation': implementation_info,
+        'system_ssl': system_ssl_info,
+        'using_pyopenssl': pyopenssl is not None,
+        'pyOpenSSL': pyopenssl_info,
+        'urllib3': urllib3_info,
+        'chardet': chardet_info,
+        'cryptography': cryptography_info,
+        'idna': idna_info,
+        'requests': {
+            'version': requests_version,
+        },
+    }
+
+
+def main():
+    """Pretty-print the bug information as JSON."""
+    print(json.dumps(info(), sort_keys=True, indent=2))
+
+
+if __name__ == '__main__':
+    main()
